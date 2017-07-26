@@ -8,6 +8,8 @@ shinyUI(fluidPage(
   titlePanel("Insurance Claims Prediction"),
   p("Insert, in the left panel, the information related to a car insurance. The probability of a claim will be shown on the rigth panel. "),
   p("Also in the right panel, there is a plot showing the claims distribution by type of vehicle (the 'vehicle body' selected)"),
+  p("(Source code at https://github.com/enrique-repulles/data-products-shiny)"),
+
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
