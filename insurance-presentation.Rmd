@@ -1,0 +1,77 @@
+---
+title: "Insurance claims prediction"
+subtitle: "Coursera reproducible pitch"
+author: "Enrique Repullés"
+output: slidy_presentation
+date: "Jul 26, 2017"
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Introduction
+
+<style type="text/css">
+code.r{
+  font-size: 15px;
+}
+pre {
+  font-size: 15px
+}
+
+</style>
+
+The deployed application makes a prediction of the probability of claims in a car insurance. This can be used to determine the insurance premium.
+
+The application can be viewed at [https://enrique-repulles.shinyapps.io/insurance/]
+
+In the application left panel, the user can introduce the information related to the car insurance and see the prediction on the right panel.
+
+- The source code for the application and this presentation can be found at [https://github.com/enrique-repulles/data-products-shiny]
+
+## Data 
+
+```{r data preparation, echo = FALSE,  message=FALSE}
+library(caret)
+library(ggplot2)
+
+dataCar<-read.csv("insuranceCarData.csv")
+dataCar$agecat <- factor(dataCar$agecat)
+dataCar$clm <- factor(dataCar$clm)
+dataCar$X<-NULL
+dataCar$X_OBSTAT_<-NULL
+dataCar$numclaims<-NULL
+```
+The data set used for the prediction engine has the following structure:
+
+```{r data structure, echo = FALSE,  message=FALSE, }
+  summary(dataCar)
+```
+
+## Training method
+
+For the machine learning training, the data set was splitted into a training set and a test set (used later to determine accuracy).The algorithm for the training was a basic partitioning tree ("rpart")
+
+```{r training, echo = TRUE,  message=FALSE}
+values <- createDataPartition(dataCar$clm, p=.7,list=FALSE)
+training <- dataCar[values,]
+testing <- dataCar[-values,]
+model.fit<-train (clm ~ veh_value + exposure + veh_body +
+                  veh_age + gender + area + agecat ,
+                  data=training, method="rpart" )
+
+```
+
+## Results
+The test data set was used to determine accuracy:
+```{r test accuracy, echo = FALSE}
+predictions <- predict(model.fit, testing)
+confusionMatrix(predictions, testing$clm)
+```
+Conclusions: The accuracy achieved is not very high, so some time must be invested in find better data.
+
